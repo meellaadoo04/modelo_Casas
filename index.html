@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Precio de Casas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4D44DB;
+            --dark: #2A2D3E;
+            --light: #F8F9FF;
+            --accent: #FF6584;
+            --success: #2ECC71;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.1) 0%, rgba(108, 99, 255, 0.05) 90%);
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .sidebar h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .sidebar p {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-img {
+            margin-top: auto;
+            text-align: center;
+        }
+        
+        .sidebar-img i {
+            font-size: 120px;
+            opacity: 0.2;
+        }
+        
+        .form-content {
+            padding: 40px;
+        }
+        
+        .form-header {
+            margin-bottom: 30px;
+        }
+        
+        .form-header h2 {
+            font-size: 22px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .form-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            background-color: white;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .input-icon input, .input-icon select {
+            padding-left: 40px;
+        }
+        
+        button {
+            width: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f5f7ff;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #666;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .section-divider::before, .section-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+            margin: 0 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar">
+            <h1>Encuentra el valor real de tu propiedad</h1>
+            <p>Nuestro sistema avanzado analiza múltiples factores para darte una estimación precisa del valor de mercado de tu vivienda.</p>
+            <div class="sidebar-img">
+                <i class="fas fa-home"></i>
+            </div>
+        </div>
+        
+        <div class="form-content">
+            <div class="form-header">
+                <h2>Datos de la propiedad</h2>
+                <p>Complete todos los campos para obtener una predicción precisa</p>
+            </div>
+            
+            <form id="predictionForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="area">Área total</label>
+                        <div class="input-icon">
+                            <i class="fas fa-ruler-combined"></i>
+                            <input type="number" id="area" name="area" placeholder="Pies cuadrados" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bedrooms">Habitaciones</label>
+                        <div class="input-icon">
+                            <i class="fas fa-bed"></i>
+                            <input type="number" id="bedrooms" name="bedrooms" placeholder="Número" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bathrooms">Baños</label>
+                        <div class="input-icon">
+                            <i class="fas fa-bath"></i>
+                            <input type="number" id="bathrooms" name="bathrooms" placeholder="Número" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stories">Pisos</label>
+                        <div class="input-icon">
+                            <i class="fas fa-layer-group"></i>
+                            <input type="number" id="stories" name="stories" placeholder="Número" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parking">Estacionamiento</label>
+                        <div class="input-icon">
+                            <i class="fas fa-car"></i>
+                            <input type="number" id="parking" name="parking" placeholder="Plazas" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="furnishingstatus">Mobiliario</label>
+                        <div class="input-icon">
+                            <i class="fas fa-couch"></i>
+                            <select id="furnishingstatus" name="furnishingstatus" required>
+                                <option value="" disabled selected>Seleccionar</option>
+                                <option value="furnished">Amueblado</option>
+                                <option value="semi-furnished">Semiamueblado</option>
+                                <option value="unfurnished">No amueblado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-divider">Características adicionales</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mainroad">Calle principal</label>
+                        <select id="mainroad" name="mainroad" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="guestroom">Habitación invitados</label>
+                        <select id="guestroom" name="guestroom" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="basement">Sótano</label>
+                        <select id="basement" name="basement" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hotwaterheating">Agua caliente</label>
+                        <select id="hotwaterheating" name="hotwaterheating" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="airconditioning">Aire acondicionado</label>
+                        <select id="airconditioning" name="airconditioning" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prefarea">Zona preferencial</label>
+                        <select id="prefarea" name="prefarea" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="button" onclick="predictPrice()">
+                    <i class="fas fa-calculator"></i> Calcular Valor
+                </button>
+            </form>
+            
+            <div class="result-container" id="result" style="display: none;">
+                <div class="result-title">VALOR ESTIMADO</div>
+                <div class="result-value" id="result-value">€0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function predictPrice() {
+            const form = document.getElementById('predictionForm');
+            const formData = new FormData(form);
+            const data = {};
+            const resultContainer = document.getElementById('result');
+            const resultValue = document.getElementById('result-value');
+
+            formData.forEach((value, key) => {
+                if (key === 'furnishingstatus') {
+                    data['furnishingstatus_furnished'] = value === 'furnished' ? 1 : 0;
+                    data['furnishingstatus_semi-furnished'] = value === 'semi-furnished' ? 1 : 0;
+                    data['furnishingstatus_unfurnished'] = value === 'unfurnished' ? 1 : 0;
+                } else {
+                    data[key] = parseFloat(value);
+                }
+            });
+
+            data['bed_to_bath_ratio'] = data['bedrooms'] / data['bathrooms'];
+            data['area_per_story'] = data['area'] / data['stories'];
+            data['bath_per_story'] = data['bathrooms'] / data['stories'];
+            data['room_density'] = (data['bedrooms'] + data['bathrooms']) / data['area'];
+            data['parking_per_area'] = data['parking'] / data['area'];
+            data['bedrooms_per_story'] = data['bedrooms'] / data['stories'];
+            data['bathrooms_per_bedroom'] = data['bathrooms'] / data['bedrooms'];
+            data['area_per_bedroom'] = data['area'] / data['bedrooms'];
+            data['area_per_bathroom'] = data['area'] / data['bathrooms'];
+            data['parking_per_bedroom'] = data['parking'] / data['bedrooms'];
+
+            try {
+                resultContainer.style.display = 'block';
+                resultValue.textContent = 'Calculando...';
+
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    resultValue.textContent = `€${result.predicted_price.toLocaleString()}`;
+                } else {
+                    resultValue.textContent = 'Error en el cálculo';
+                }
+            } catch (error) {
+                resultValue.textContent = 'Error de conexión';
+            }
+        }
+    </script>
+</body>
+</html>
