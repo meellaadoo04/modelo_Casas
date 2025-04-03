@@ -45,6 +45,9 @@ Abre el archivo `index.html` en tu navegador.
 2. Haz clic en "Predecir Precio".
 3. La aplicación enviará los datos a la API Flask y mostrará el precio estimado.
 
+![pagina_casas](https://github.com/user-attachments/assets/9d7f4b0c-918d-48a2-9d88-f6aea4fb6eb2)
+
+
 ## Estructura del Proyecto
 ```
 .
@@ -91,9 +94,4 @@ Ejemplo de respuesta:
 }
 ```
 
-## Contribuciones
-Si deseas contribuir, siéntete libre de hacer un fork del repositorio y enviar un pull request.
-
-## Licencia
-Este proyecto está bajo la licencia MIT.
 
