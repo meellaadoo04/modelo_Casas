@@ -48,19 +48,6 @@ Abre el archivo `index.html` en tu navegador.
 ![pagina_casas](https://github.com/user-attachments/assets/9d7f4b0c-918d-48a2-9d88-f6aea4fb6eb2)
 
 
-## Estructura del Proyecto
-```
-.
-├── static/
-│   ├── styles.css
-│   ├── script.js
-├── templates/
-│   ├── index.html
-├── app.py  # API Flask
-├── model.pkl  # Modelo de Machine Learning entrenado
-├── requirements.txt  # Dependencias
-├── README.md
-```
 
 ## API Endpoint
 ### `POST /predict`
